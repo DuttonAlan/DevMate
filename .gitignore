@@ -1,0 +1,9 @@
+# Rider project files
+.idea/
+
+# Build outputs
+bin/
+obj/
+
+# macOS system files
+.DS_Store
