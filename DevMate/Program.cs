@@ -16,6 +16,7 @@ class Program
         var rootCommand = new RootCommand(RootCommandDescription);
         rootCommand.Subcommands.Add(new GenerateUuidCommand());
         rootCommand.Subcommands.Add(new HttpRequestCommand());
+        rootCommand.Subcommands.Add(new ConverterCommand());
         
         return rootCommand.Parse(args).Invoke();
     }
