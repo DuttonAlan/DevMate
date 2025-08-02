@@ -14,6 +14,6 @@ public class GenerateUuidCommand : Command
     public GenerateUuidCommand()
         : base(CommandName, CommandDescription)
     {
-        SetAction(a => Console.WriteLine(Guid.NewGuid().ToString()));
+        SetAction(a => Console.WriteLine(Guid.NewGuid()));
     }
 }
