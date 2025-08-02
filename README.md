@@ -1,6 +1,7 @@
 # devmate
 
-**devmate** is a cross-platform command-line tool for developers, offering essential utilities like UUID generation, HTTP requests, and data format conversion. Built with .NET and `System.CommandLine`.
+**devmate** is a cross-platform command-line tool for developers, offering essential utilities like UUID generation, HTTP requests, and data format conversion. 
+Built with .NET and `System.CommandLine`.
 
 ---
 
