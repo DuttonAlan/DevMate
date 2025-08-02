@@ -14,8 +14,13 @@ class Program
     static int Main(string[] args)
     {
         var rootCommand = new RootCommand(RootCommandDescription);
-        rootCommand.Subcommands.Add(new GenerateUuidCommand());
+        InitializeSubCommands(rootCommand);
         
         return rootCommand.Parse(args).Invoke();
+    }
+
+    private static void InitializeSubCommands(RootCommand rootCommand)
+    {
+        rootCommand.Subcommands.Add(new GenerateUuidCommand());
     }
 }
