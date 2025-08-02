@@ -14,13 +14,9 @@ class Program
     static int Main(string[] args)
     {
         var rootCommand = new RootCommand(RootCommandDescription);
-        InitializeSubCommands(rootCommand);
+        rootCommand.Subcommands.Add(new GenerateUuidCommand());
+        rootCommand.Subcommands.Add(new HttpRequestCommand());
         
         return rootCommand.Parse(args).Invoke();
-    }
-
-    private static void InitializeSubCommands(RootCommand rootCommand)
-    {
-        rootCommand.Subcommands.Add(new GenerateUuidCommand());
     }
 }
