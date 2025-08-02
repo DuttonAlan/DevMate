@@ -12,7 +12,8 @@ public class HttpRequestCommand : Command
 {
     private const string CommandName = "http";
     private const string CommandDescription = "Send http request using the commandline.";
-    
+
+    private readonly Argument<string> _method = new ("method") { Description = "The http method." };
     private readonly Argument<string> _uri = new ("uri") { Description = "The request uri" };
     
     private readonly Option<string> _bodyOption = new ("-b", "--body") { Description = "Set request body" };
@@ -22,32 +23,24 @@ public class HttpRequestCommand : Command
     public HttpRequestCommand() 
         : base(CommandName, CommandDescription)
     {
-        InitializeHttpCommand("get", "Sends a GET request.", HttpMethod.Get);
-        InitializeHttpCommand("post", "Sends a POST request.", HttpMethod.Post);
-        InitializeHttpCommand("patch", "Sends a PATCH request.", HttpMethod.Patch);
-        InitializeHttpCommand("delete", "Sends a DELETE request.", HttpMethod.Delete);
+        Arguments.Add(_method);
+        Arguments.Add(_uri);
+        Options.Add(_bodyOption);
+        Options.Add(_headerOption);
+        Options.Add(_statusOnlyOption);
+        SetAction(SendHttpRequest);
     }
 
-    private void InitializeHttpCommand(string name, string description, HttpMethod method)
+    private void SendHttpRequest(ParseResult parseResult)
     {
-        var command = new Command(name, description);
-        command.Arguments.Add(_uri);
-        command.Options.Add(_bodyOption);
-        command.Options.Add(_headerOption);
-        command.Options.Add(_statusOnlyOption);
-        command.SetAction(parseResult => SendHttpRequest(parseResult, method));
-        Subcommands.Add(command);
-    }
-
-    private void SendHttpRequest(ParseResult parseResult, HttpMethod httpMethod)
-    {
+        var method = MapStringToMethod(parseResult.GetValue(_method));
         var uri = parseResult.GetValue(_uri);
         var body = parseResult.GetValue(_bodyOption);
         var headers = parseResult.GetValue(_headerOption);
         var statusOnly = parseResult.GetValue(_statusOnlyOption);
         
         var client = new HttpClient();
-        var request = new HttpRequestMessage(httpMethod, uri);
+        var request = new HttpRequestMessage(method, uri);
         
         if (!string.IsNullOrEmpty(body))
         {
@@ -82,4 +75,18 @@ public class HttpRequestCommand : Command
             Console.WriteLine($"Payload: {content}");
         }
     }
+
+    private HttpMethod MapStringToMethod(string method) => method.ToLower().Trim() switch
+    {
+        "get" => HttpMethod.Get,
+        "post" => HttpMethod.Post,
+        "put" => HttpMethod.Put,
+        "patch" => HttpMethod.Patch,
+        "delete" => HttpMethod.Delete,
+        "head" => HttpMethod.Head,
+        "options" => HttpMethod.Options,
+        "connect" => HttpMethod.Connect,
+        "trace" => HttpMethod.Trace,
+        _ => throw new ArgumentOutOfRangeException()
+    };
 }
