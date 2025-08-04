@@ -31,13 +31,6 @@ jobs:
           dotnet publish -c Release -r osx-arm64 --self-contained true -o publish-mac
           zip -r cli-tool-osx-arm64.zip publish-mac/
 
-      - name: Delete previous preview release (if exists)
-        uses: dev-drprasad/delete-tag-and-release@v1.1
-        with:
-          tag-name: preview
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Create GitHub Release (preview)
         uses: softprops/action-gh-release@v2
         with:
