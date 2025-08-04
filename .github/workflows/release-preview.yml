@@ -1,0 +1,53 @@
+name: Preview Release for .NET CLI Tool (Win + macOS ARM)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build for Windows
+        run: |
+          dotnet publish -c Release -r win-x64 --self-contained true -o publish-win
+          zip -r cli-tool-win-x64.zip publish-win/
+
+      - name: Build for macOS ARM
+        run: |
+          dotnet publish -c Release -r osx-arm64 --self-contained true -o publish-mac
+          zip -r cli-tool-osx-arm64.zip publish-mac/
+
+      - name: Delete previous preview release (if exists)
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag-name: preview
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release (preview)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: preview
+          name: "Preview Release"
+          body: "Automatischer Preview Release von `main` (Windows + macOS ARM)"
+          draft: true
+          prerelease: true
+          files: |
+            cli-tool-win-x64.zip
+            cli-tool-osx-arm64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
