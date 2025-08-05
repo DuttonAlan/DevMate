@@ -1,4 +1,4 @@
-name: Preview Release for .NET CLI Tool (Win + macOS ARM)
+name: Publish Release
 
 on:
   push:
@@ -23,12 +23,12 @@ jobs:
 
       - name: Build for Windows
         run: |
-          dotnet publish -c Release -r win-x64 --self-contained true -o publish-win
+          dotnet publish -c Release -r win-x64 -o publish-win
           zip -r devmate-win-x64.zip publish-win/
 
       - name: Build for macOS ARM
         run: |
-          dotnet publish -c Release -r osx-arm64 --self-contained true -o publish-mac
+          dotnet publish -c Release -r osx-arm64 -o publish-mac
           zip -r devmate-osx-arm64.zip publish-mac/
           
       - name: Delete previous preview release (if exists)
